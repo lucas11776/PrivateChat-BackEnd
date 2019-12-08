@@ -9,7 +9,19 @@ class Register extends CI_Controller {
 	 * @Maps - http://website/api/register
 	 */
 	public function index() {
+		$this->form_validation->set_rules('username', 'username', 'required');
+		$this->form_validation->set_rules('email', 'email', 'required');
+		$this->form_validation->set_rules('password', 'password', 'required');
+		$this->form_validation->set_rules('confirm_password', 'confirm_password', 'required');
 		
+		if($this->form_validation->run() === false) {
+		    echo json_encode([
+		        'status' => false,
+		        'message' => 'Something went wrong when tring register your account.',
+		        'data' => $this->form_validation->error_array()
+		    ]);
+		    return;
+		}
 	}
 
 	/**
