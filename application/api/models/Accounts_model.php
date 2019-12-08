@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Accounts_model
+class Accounts_model extends CI_Model
 {
     
     public const TABLE = 'accounts';

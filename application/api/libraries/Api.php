@@ -5,15 +5,38 @@ class Api extends CI_Input
 {
     
     /**
-     * Get input stream data and assign data to POST
-     * 
-     * assign stream data to post munally because PHP
-     * deos not assing ajax data to post
+     * Initialize CI_Input class constructor
      */
     public function __construct() {
-        // get raw post request data and assign it to POST
-        $_POST = json_encode($this->input_stream(), true);
         parent::__construct();
+    }
+    
+    /**
+     * Rest Api response
+     * 
+     * @param bool $status
+     * @param string $message
+     * @param array $data
+     * @param int $code
+     * @return string
+     */
+    public function api_response(bool $status = TRUE, string $message = '', array $data = [], int $code = 202) {
+        return $this->response(['status' => $status, 'message' => $message, 'data' => $data], $code);
+    }
+    
+    
+    /**
+     * Api response
+     * 
+     * @param bool $data
+     * @param int $code
+     * @return string
+     */
+    public function response(array $data = [], int $code = 202) {
+        // set response headers
+        http_response_code($code);
+        echo $response = json_encode($data);
+        return $response;
     }
     
 }

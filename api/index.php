@@ -38,6 +38,28 @@
 
 /*
  *---------------------------------------------------------------
+ * Allow Cross Site Scripting
+ *---------------------------------------------------------------
+ *
+ * Allow all script to excute request to execute this script
+ * 
+ */
+
+/*
+ *---------------------------------------------------------------
+ * REQUEST INITAILIZATION
+ *---------------------------------------------------------------
+ *
+ * Get PHP file stream data and assign data to `$_POST` because PHP
+ * does not assign ajax request `POST` data to `$_POST` var
+ *
+ * @var object
+ */
+$_POST = json_decode(file_get_contents('php://input'), true);
+
+
+/*
+ *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
  *---------------------------------------------------------------
  *
