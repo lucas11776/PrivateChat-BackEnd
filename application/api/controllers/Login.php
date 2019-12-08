@@ -22,7 +22,7 @@ class Login extends CI_Controller
             return $this->api->api_response(false, $message);
         }
         
-        $account_password = $this->account['password'];
+        $account_password = $this->encryption->decrypt($this->account['password']);
         
         if($account_password != $this->input->post('password')) {
             $message = 'Invalid login credentails please enter correct credentails.';
@@ -30,7 +30,11 @@ class Login extends CI_Controller
         }
         
         return $this->api->api_response(true, 'Correct login credentails.', [
-            'token' => uniqid()
+            'token' => $this->encryption->encrypt(json_encode([
+                'user_id' => $this->account['user_id'],
+                'ip_address' => $this->input->ip_address(),
+                'expire' => time() + ((60*60)*24)
+            ]))
         ]);
     }
     

@@ -24,7 +24,7 @@ class Register extends CI_Controller
 		$account = [
 		    'username' => $this->input->post('username'),
 		    'email' => $this->input->post('email'),
-		    'password' => $this->input->post('password'),
+		    'password' => $this->encryption->encrypt($this->input->post('password')),
 		];
 		
 		if($this->accounts->insert($account) === false) {

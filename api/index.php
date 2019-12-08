@@ -36,20 +36,21 @@
  * @filesource
  */
 
+
 /*
  *---------------------------------------------------------------
- * Allow Cross Site Scripting
+ * APPICATION HEADERS
  *---------------------------------------------------------------
  *
  * Allow all script to excute request to execute this script
  * 
  */
 header("Access-Control-Allow-Origin: *");
-
+header("Content-Type: application/json");
 
 /*
  *---------------------------------------------------------------
- * REQUEST INITAILIZATION
+ * APPLICATION REQUEST DATA
  *---------------------------------------------------------------
  *
  * Get PHP file stream data and assign data to `$_POST` because PHP

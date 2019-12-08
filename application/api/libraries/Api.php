@@ -33,7 +33,6 @@ class Api extends CI_Input
      * @return string
      */
     public function response(array $data = [], int $code = 202) {
-        // set response headers
         http_response_code($code);
         echo $response = json_encode($data);
         return $response;

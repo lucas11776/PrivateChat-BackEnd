@@ -61,7 +61,8 @@ $autoload['packages'] = array();
 $autoload['libraries'] = array(
     'api',
     'database',
-    'form_validation'
+    'form_validation',
+    'encryption'
 );
 
 /*
