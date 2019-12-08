@@ -43,6 +43,19 @@ class Accounts_model extends CI_Model
         return count($this->get(['email' => $email])) > 0 ? true : false;
     }
     
+    /**
+     * Get account by username or email
+     * 
+     * @param string $username
+     * @return array
+     */
+    public function get_account_username(string $username) {
+        return $this->db->where('username', $username)
+                        ->or_where('email', $username)
+                        ->get(self::TABLE, 1)
+                        ->result_array()[0] ?? [];
+    }
+    
     
     
 }

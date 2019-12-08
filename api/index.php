@@ -44,6 +44,8 @@
  * Allow all script to excute request to execute this script
  * 
  */
+header("Access-Control-Allow-Origin: *");
+
 
 /*
  *---------------------------------------------------------------
