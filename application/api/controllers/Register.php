@@ -10,7 +10,7 @@ class Register extends CI_Controller
 	 * @Maps - http://website/api/register
 	 */
 	public function index() {
-	    
+	    $this->auth->loggedout();
 		$this->form_validation->set_rules('username', 'username', 'required|min_length[3]|max_length[20]|callback_username_exist');
 		$this->form_validation->set_rules('email', 'email', 'required|callback_email_exist');
 		$this->form_validation->set_rules('password', 'password', 'required|min_length[3]|max_length[20]');

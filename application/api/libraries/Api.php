@@ -21,7 +21,11 @@ class Api extends CI_Input
      * @return string
      */
     public function api_response(bool $status = TRUE, string $message = '', array $data = [], int $code = 202) {
-        return $this->response(['status' => $status, 'message' => $message, 'data' => $data], $code);
+        return $this->response([
+            'status' => $status,
+            'message' => $message,
+            'data' => $data
+        ], $code);
     }
     
     

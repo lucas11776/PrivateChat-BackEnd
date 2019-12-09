@@ -12,7 +12,7 @@ class Login extends CI_Controller
      * @Maps - http://website/api/register
      */
     public function index() {
-        
+        $this->auth->loggedout();
         $this->form_validation->set_rules('username', 'username', 'required|callback_username_exist');
         $this->form_validation->set_rules('password', 'password', 'required');
         

@@ -42,7 +42,7 @@
  * APPICATION HEADERS
  *---------------------------------------------------------------
  *
- * Allow all script to excute request to execute this script
+ * Allow cross site scripting, Set content response type to json
  * 
  */
 header("Access-Control-Allow-Origin: *");
