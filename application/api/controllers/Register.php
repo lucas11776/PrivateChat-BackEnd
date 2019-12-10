@@ -22,6 +22,8 @@ class Register extends CI_Controller
 		}
 		
 		$account = [
+		    'last_seen' => time(),
+		    'profile_picture' => base_url($this->accounts::PROFILE_PICTURE),
 		    'username' => $this->input->post('username'),
 		    'email' => $this->input->post('email'),
 		    'password' => $this->encryption->encrypt($this->input->post('password')),

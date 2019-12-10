@@ -12,6 +12,13 @@ class Accounts_model extends CI_Model
     public const TABLE = 'accounts';
     
     /**
+     * Defualt profile picture
+     * 
+     * @var string
+     */
+    public const PROFILE_PICTURE = 'assets/defualt/profile_picture.png';
+    
+    /**
      * Insert/Create new account in database
      * 
      * @param array $data
