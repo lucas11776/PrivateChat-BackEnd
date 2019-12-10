@@ -1,7 +1,7 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Authentication extends CI_Encryption
+class Authentication
 {
     
     /**
@@ -19,8 +19,8 @@ class Authentication extends CI_Encryption
     private $account;
     
     public function __construct() {
-        parent::__construct();
         $this->CI =& get_instance();
+        $this->CI->load->library('encryption');
         $this->CI->load->model('accounts_model');
         $this->CI->load->library('api');
         $this->account = $this->get_user_account();
@@ -37,6 +37,16 @@ class Authentication extends CI_Encryption
             $this->unauthorized_access();
         }
         return count($this->account) !== 0 ? true : false;
+    }
+    
+    /**
+     * Get user account details
+     * 
+     * @param string $index
+     * @return NULL|array|string
+     */
+    public function account(string $index = NULL) {
+        return $index === null ? $this->account : $this->account[$index] ?? NULL;
     }
     
     /**
@@ -62,6 +72,15 @@ class Authentication extends CI_Encryption
             'message' => 'Unauthorized Access...'
         ], 401);
         exit();
+    }
+    
+    public function updated_user_last_seen() {
+        if($this->loggedout(false)) {
+            return false;
+        }
+        return $this->CI->accounts_model->update(
+            ['user_id' => $this->account('user_id')],
+            ['last_seen' => time()]);
     }
     
     /**
@@ -100,7 +119,7 @@ class Authentication extends CI_Encryption
             return $token_header;
         }
         
-        $token_header = json_decode($this->decrypt($token_header), true);
+        $token_header = json_decode($this->CI->encryption->decrypt($token_header), true);
         
         if(!is_array($token_header)) {
             return [];

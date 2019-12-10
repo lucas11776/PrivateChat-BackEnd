@@ -1,14 +1,22 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Api extends CI_Input
+class Api
+
 {
     
     /**
-     * Initialize CI_Input class constructor
+     * CodeIgniter super-object
+     * 
+     * @var CI_Controller
+     */
+    protected $CI;
+    
+    /**
+     * Initialize class
      */
     public function __construct() {
-        parent::__construct();
+        $this->CI =& get_instance();
     }
     
     /**

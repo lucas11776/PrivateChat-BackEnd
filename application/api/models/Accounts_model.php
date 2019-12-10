@@ -4,6 +4,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Accounts_model extends CI_Model
 {
     
+    /**
+     * Users accounts table name in database
+     * 
+     * @var string
+     */
     public const TABLE = 'accounts';
     
     /**
@@ -16,6 +21,14 @@ class Accounts_model extends CI_Model
         return $this->db->insert(self::TABLE, $data);
     }
     
+    /**
+     * Get users accounts from database
+     * 
+     * @param array $where
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
     public function get(array $where = [], int $limit = NULL, int $offset = NULL) {
         return $this->db->where($where)
                         ->order_by('created', 'DESC')
@@ -56,7 +69,17 @@ class Accounts_model extends CI_Model
                         ->result_array()[0] ?? [];
     }
     
-    
+    /**
+     * Updated account values/fields
+     * 
+     * @param array $where
+     * @param array $replace
+     * @return boolean
+     */
+    public function update(array $where, array $replace) {
+        return $this->db->where($where)
+                        ->update(self::TABLE, $replace);
+    }
     
 }
 
