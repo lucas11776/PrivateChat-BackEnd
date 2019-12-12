@@ -54,6 +54,7 @@ $route['register'] = 'register/index';
 $route['loggedin'] = 'authorization/loggedin';
 $route['loggedout'] = 'authorization/loggedout';
 $route['friends'] = 'friends/friends/index';
+$route['friends/requests'] = 'friends/requests/index';
 $route['friends/search/(:any)'] = 'friends/search/index/$1';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

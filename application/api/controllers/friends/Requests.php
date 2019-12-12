@@ -1,10 +1,24 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Request extends CI_Controller
+class Requests extends CI_Controller
 {
     
     private $friend;
+    
+    /**
+     * Get user friends request
+     * 
+     * @Map - http://website/api/friends/requests
+     */
+    public function index(string $string = NULL) {
+        $this->auth->loggedin();
+        $limit = is_numeric($this->input->get('limit')) ? $this->input->get('limit') : 0;
+        $offset = is_numeric($this->input->get('offset')) ? $this->input->get('offset') : 0;
+        return $this->api->response(
+            $this->friends_requests->get($this->auth->account('user_id'), $limit, $offset)
+        );
+    }
     
     /**
      * Send friend requet response for this controller.
