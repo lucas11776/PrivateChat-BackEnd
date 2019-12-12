@@ -5,7 +5,7 @@ class Register extends CI_Controller
 {
 
 	/**
-	 * Index response for this controller.
+	 * Register a user in database
 	 *
 	 * @Maps - http://website/api/register
 	 */

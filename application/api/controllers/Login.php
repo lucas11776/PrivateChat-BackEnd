@@ -7,7 +7,7 @@ class Login extends CI_Controller
     private $account;
     
     /**
-     * Index response for this controller.
+     * Check if user creditails are valid and return user token
      *
      * @Maps - http://website/api/register
      */
