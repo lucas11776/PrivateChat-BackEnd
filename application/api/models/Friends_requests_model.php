@@ -26,8 +26,9 @@ class Friends_requests_model extends CI_Model
      * @return CI_DB
      */
     private function select_user(int $user, int $friend) {
-        return $this->db->where([self::TABLE.'.from_user' => $user, self::TABLE.'.to_user' => $friend])
-                        ->or_where([self::TABLE.'.from_user' => $friend, self::TABLE.'.to_user' => $user]);
+        $this->db->where([self::TABLE.'.from_user' => $user, self::TABLE.'.to_user' => $friend])
+             ->or_where([self::TABLE.'.from_user' => $friend, self::TABLE.'.to_user' => $user]);
+        return $this;
     }
     
     /**
@@ -98,9 +99,22 @@ class Friends_requests_model extends CI_Model
      */
     public function friend_request_exist(int $user, int $friend) {
         $request = $this->select_user($user, $friend)
-            ->get()
-            ->result_array();
+                        ->db->where(['from_user' => $friend, 'to_user' => $friend])
+                        ->get(self::TABLE)
+                        ->result_array();
         return count($request) !== 0 ? true : false;
+    }
+    
+    /**
+     * Delete friend request from databases
+     * 
+     * @param int $user
+     * @param int $friend
+     * @return boolean
+     */
+    public function delete(int $user, int $friend) {
+        return $this->select_user($user, $friend)
+                    ->delete(self::TABLE);
     }
     
 }

@@ -42,7 +42,7 @@ class Friends_model extends CI_Model
     }
     
     /**
-     * Join request table by user id and friend id
+     * Join request table with `TABLE` by user id and friend id
      * 
      * @param int $user_id
      * @return Friends_model
@@ -55,7 +55,7 @@ class Friends_model extends CI_Model
     }
     
     /**
-     * Join friends table by user id  and friend id
+     * Join friends table with `TABLE` by user id  and friend id
      * 
      * @param int $user_id
      * @return Friends_model
@@ -68,7 +68,7 @@ class Friends_model extends CI_Model
     }
     
     /**
-     * Join chats table by user id and friends id and user seen
+     * Join chats table with `TABLE` by user id and friends id and user seen
      * 
      * @param int $user_id
      * @return Friends_model
@@ -80,12 +80,29 @@ class Friends_model extends CI_Model
         return $this;
     }
     
-    
+    /**
+     * Join account table with `TABLE`
+     * 
+     * @param int $user_id
+     * @return Friends_model
+     */
     private function join_account_table(int $user_id) {
         $cord = '('.self::ACCOUNTS.'.user_id='.self::TABLE.'.from_user AND '.self::TABLE.'.from_user!='.$user_id.') OR (';
         $cord .= self::ACCOUNTS.'.user_id='.self::TABLE.'.to_user AND '.self::TABLE.'.to_user!='.$user_id.')';
         $this->db->join(self::ACCOUNTS, $cord, 'LEFT');
         return $this;
+    }
+    
+    /**
+     * Insert a new friend relationship in database
+     * 
+     * @param int $from
+     * @param int $to
+     * @return boolean
+     */
+    public function insert(int $from, int $to) {
+        $data = ['from_user' => $from, 'to_user' => $to];
+        return $this->db->insert(self::TABLE, $data);
     }
     
     /**
@@ -126,8 +143,33 @@ class Friends_model extends CI_Model
                     ->like(self::ACCOUNTS.'.username', $username)
                     ->count_all_results(self::ACCOUNTS);
     }
-
     
+    /**
+     * Check if friendship exist between two users
+     * 
+     * @param int $user
+     * @param int $friend
+     * @return boolean
+     */
+    public function friendship_exist(int $user, int $friend) {
+        $exist = $this->db
+            ->where(['from_user' => $user, 'to_user' => $friend])
+            ->or_where(['to_user' => $user, 'from_user' => $friend])
+            ->get(self::TABLE)
+            ->result_array();
+        return count($exist) !== 0 ? true : false;
+    }
+
+
+    /**
+     * Get user friends from datbase
+     * 
+     * @param string $search
+     * @param int $user_id
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
     public function friends(string $search ,int $user_id, int $limit = NULL, int $offset = NULL) {
         return $this->join_chats_table($user_id)
                     ->join_account_table($user_id)
