@@ -12,15 +12,30 @@ class Friends extends CI_Controller
      * @Maps - http://website/api/friends
      */
     public function index(string $search = NULL) {
+        $this->auth->loggedin();
         $limit = is_numeric($this->input->get('limit')) ? $this->input->get('limit') : 0;
         $offset = is_numeric($this->input->get('offset')) ? $this->input->get('offset') : 0;
-        return $this->api->response($this->friends->friends($search ?? '', 1, $limit, $offset));
+        return $this->api->response(
+            $this->friends->friends(
+                $search ?? '',
+                $this->auth->account('user_id'),
+                $limit,
+                $offset
+            )
+        );
     }
 
-    public function chat_preview() {
+    public function chat_preview(string $search = NULL) {
         $limit = is_numeric($this->input->get('limit')) ? $this->input->get('limit') : 0;
         $offset = is_numeric($this->input->get('offset')) ? $this->input->get('offset') : 0;
-        return $this->api->response($this->friends->friends($search ?? '', 1, $limit, $offset));
+        return $this->api->response(
+            $this->friends->friends(
+                $search ?? '',
+                $this->auth->account('user_id'),
+                $limit,
+                $offset
+            )
+        );
     }
     
 }

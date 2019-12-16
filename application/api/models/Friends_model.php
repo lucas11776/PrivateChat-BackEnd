@@ -138,8 +138,12 @@ class Friends_model extends CI_Model
      */
     public function friendship_exist(int $user, int $friend) {
         $exist = $this->db
-            ->where(['from_user' => $user, 'to_user' => $friend])
-            ->or_where(['to_user' => $user, 'from_user' => $friend])
+            ->group_start()
+                ->where(['from_user' => $user, 'to_user' => $friend])
+            ->group_end()
+            ->or_group_start()
+                ->where(['to_user' => $user, 'from_user' => $friend])
+            ->group_end()
             ->get(self::TABLE)
             ->result_array();
         return count($exist) !== 0 ? true : false;
