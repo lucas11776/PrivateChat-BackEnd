@@ -112,8 +112,9 @@ class Friends_requests_model extends CI_Model
      * @param int $friend
      * @return boolean
      */
-    public function delete(int $user, int $friend) {
+    public function delete($user, $friend) {
         return $this->select_user($user, $friend)
+                    ->db
                     ->delete(self::TABLE);
     }
     

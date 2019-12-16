@@ -48,8 +48,8 @@ class Requests extends CI_Controller
             return $this->api->response(false, 'Something went wrong when tring to connect to database.');
         }
         
-        if($this->friends_requests->delete($this->auth->account('user_id'), $this->friend['user_id']) === false) {
-            $this->friends_requests->delete($this->auth->account('user_id'), $this->friend['user_id']);
+        if($this->delete_friend_request() === false) {
+            $this->delete_friend_request();
         }
         
         return $this->api->api_response(true, 'You are now friends with '.$this->friend['username']);
@@ -65,7 +65,7 @@ class Requests extends CI_Controller
     }
     
     public function friend_exist(string $username = NULL) {
-        $this->get_friend_username($username);
+        $this->get_friend_username($username ?? '');
         if(count($this->friend) === 0) {
             $this->form_validation->set_message('friend_exist', 'Friend username does not exist');
             return false;
@@ -79,8 +79,12 @@ class Requests extends CI_Controller
      * @param string @username
      * @return boolean
      */
-    public function already_friends(string $username = NULL) {
-        $this->get_friend_username($username ?? '');
+    public function already_friends() {
+        $friends = $this->friends->friendship_exist($this->auth->account('user_id'), $this->friend['user_id']);
+        if($friends !== true) {
+            $this->form_validation->set_message('not_friends', 'You are already friends with '.$this->friend['username'].'.');
+            return false;
+        }
         return true;
     }
     
@@ -90,10 +94,10 @@ class Requests extends CI_Controller
      * @param string $username
      * @return boolean
      */
-    public function not_friends(string $username = NULL) {
-        $this->get_friend_username($username);
+    public function not_friends() {
         $friends = $this->friends->friendship_exist($this->auth->account('user_id'), $this->friend['user_id']);
         if($friends === true) {
+            $this->delete_friend_request();
             $this->form_validation->set_message('not_friends', 'You are already friends with '.$this->friend['username'].'.');
             return false;
         }
@@ -106,8 +110,7 @@ class Requests extends CI_Controller
      * @param string $username
      * @return boolean
      */
-    public function friend_request_exist(string $username = NULL) {
-        $this->get_friend_username($username ?? '');
+    public function friend_request_exist() {
         $exist = $this->friends_requests->friend_request_exist($this->auth->account('user_id'), $this->friend['user_id']);
         if ($exist === false) {
             $this->form_validation->set_message('friend_request_exist', 'You did not recieve a friend request from that user.');
@@ -125,6 +128,15 @@ class Requests extends CI_Controller
         if($this->friend == null) {
             $this->friend = $this->accounts->get(['username' => $username])[0] ?? NULL;
         }
+    }
+    
+    /**
+     * Delete friend request from database
+     * 
+     * @return boolean
+     */
+    private function delete_friend_request() {
+        return $this->friends_requests->delete($this->auth->account('user_id'), $this->friend['user_id']);
     }
     
 }

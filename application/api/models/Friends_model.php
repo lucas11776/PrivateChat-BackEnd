@@ -34,10 +34,8 @@ class Friends_model extends CI_Model
     private const CHATS = 'chats';
     
     private function select_chat_count() {
-        $this->db->select(
-            self::ACCOUNTS.'.profile_pictre,'.self::ACCOUNTS.'.username'.self::ACCOUNTS.'.last_seen'
-            
-        );
+        $this->db->select(self::ACCOUNTS.'.username,'.self::ACCOUNTS.'.profile_picture,'.self::ACCOUNTS.'.last_seen,
+        (SELECT COUNT(*) FROM '.self::CHATS.' WHERE ('.self::CHATS.'.to_user=1 AND '.self::CHATS.'.from_user='.self::TABLE.'.from_user)) AS messages');
         return $this;
     }
     
@@ -64,19 +62,6 @@ class Friends_model extends CI_Model
         $cord = '('.self::TABLE.'.from_user='.$user_id.' AND '.self::TABLE.'.to_user='.self::ACCOUNTS.'.user_id'.') OR (';
         $cord .= self::TABLE.'.to_user='.$user_id.' AND '.self::TABLE.'.from_user='.self::ACCOUNTS.'.user_id)';
         $this->db->join(self::TABLE, $cord, 'LEFT');
-        return $this;
-    }
-    
-    /**
-     * Join chats table with `TABLE` by user id and friends id and user seen
-     * 
-     * @param int $user_id
-     * @return Friends_model
-     */
-    private function join_chats_table(int $user_id) {
-        $cord = '('.self::CHATS.'.to_user='.$user_id.' AND '.self::CHATS.'.from_user='.self::TABLE.'.from_user AND '.self::CHATS.'.seen=0) OR ';
-        $cord .= '('.self::CHATS.'.to_user='.$user_id.' AND '.self::CHATS.'.from_user='.self::TABLE.'.to_user AND '.self::CHATS.'.seen=0)';
-        $this->db->join(self::CHATS, $cord, 'LEFT');
         return $this;
     }
     
@@ -160,7 +145,6 @@ class Friends_model extends CI_Model
         return count($exist) !== 0 ? true : false;
     }
 
-
     /**
      * Get user friends from datbase
      * 
@@ -171,16 +155,17 @@ class Friends_model extends CI_Model
      * @return array
      */
     public function friends(string $search ,int $user_id, int $limit = NULL, int $offset = NULL) {
-        return $this->join_chats_table($user_id)
+        return $this->select_chat_count()
                     ->join_account_table($user_id)
                     ->db
-                    ->select(
-                        self::ACCOUNTS.'.profile_picture,'.self::ACCOUNTS.'.username,'.self::ACCOUNTS.'.last_seen,'.
-                        'count('.self::CHATS.'.chat_id) as messages')
-                    ->order_by(self::CHATS.'.created', 'DESC')
+                    ->order_by(self::TABLE.'.created', 'DESC')
+                    ->where([self::TABLE.'.from_user' => $user_id])
+                    ->or_where([self::TABLE.'.to_user' => $user_id])
                     ->get(self::TABLE)
                     ->result_array();
     }
+
+    
     
 }
 
