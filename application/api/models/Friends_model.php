@@ -33,9 +33,34 @@ class Friends_model extends CI_Model
      */
     private const CHATS = 'chats';
     
+    /**
+     * Select friends count public fields
+     * 
+     * @return Friends_model
+     */
     private function select_chat_count() {
         $this->db->select(self::ACCOUNTS.'.username,'.self::ACCOUNTS.'.profile_picture,'.self::ACCOUNTS.'.last_seen,
         (SELECT COUNT(*) FROM '.self::CHATS.' WHERE ('.self::CHATS.'.to_user=1 AND '.self::CHATS.'.from_user='.self::TABLE.'.from_user)) AS messages');
+        return $this;
+    }
+    
+    private function select_chat_preview() {
+        $this->db->select('accounts.username,accounts.profile_picture,accounts.last_seen,
+            (SELECT COUNT(*) FROM chats WHERE (chats.to_user=1 AND chats.from_user=friends.from_user)) AS messages,
+            text.content AS text,text.created AS text_created');
+        return $this;
+    }
+    
+    /**
+     * Join chats table with friendship latest text
+     * 
+     * @return Friends_model
+     */
+    private function join_chats_table_message() {
+        $table = '(SELECT * FROM chats c ORDER BY c.chat_id DESC LIMIT 1) AS text';
+        $cord = '(text.from_user='.self::TABLE.'.from_user AND text.to_user='.self::TABLE.'.to_user) OR 
+                 (text.to_user='.self::TABLE.'.from_user AND text.from_user='.self::TABLE.'.to_user)';
+        $this->db->join($table, $cord, 'LEFT');
         return $this;
     }
     
@@ -169,7 +194,26 @@ class Friends_model extends CI_Model
                     ->result_array();
     }
 
-    
+    /**
+     * Get user friends from datbase
+     *
+     * @param string $search
+     * @param int $user_id
+     * @param int $limit
+     * @param int $offset
+     * @return array
+     */
+    public function friends_chat_preview(string $search ,int $user_id, int $limit = NULL, int $offset = NULL) {
+        return $this->select_chat_preview()
+                    ->join_account_table($user_id)
+                    ->join_chats_table_message()
+                    ->db
+                    ->order_by('text_created', 'DESC')
+                    ->where([self::TABLE.'.from_user' => $user_id])
+                    ->or_where([self::TABLE.'.to_user' => $user_id])
+                    ->get(self::TABLE)
+                    ->result_array();
+    }
     
 }
 

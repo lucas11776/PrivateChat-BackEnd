@@ -60,5 +60,6 @@ $route['friends/requests/send'] = 'friends/requests/send';
 $route['friends/requests/accept'] = 'friends/requests/accept';
 $route['friends/requests/decline'] = 'friends/requests/decline';
 $route['friends/search/(:any)'] = 'friends/search/index/$1';
+$route['friends/user/(:any)'] = 'friends/friends/friends_user/$1';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
