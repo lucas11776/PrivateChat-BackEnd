@@ -53,9 +53,7 @@ class Friends extends CI_Controller
         $friend = $this->accounts->get(['username' => $friend])[0] ?? [];
        
         if(count($friend) === 0) {
-            return $this->api->api_response([
-                false, 'Friends account does not exist.'
-            ]);
+            return $this->api->api_response(false, 'Friends account does not exist.');
         }
         
         $friends_user = $this->friends->friendship_exist(
@@ -66,6 +64,39 @@ class Friends extends CI_Controller
             $friends_user,
             $friends_user ? 'You are friend with '.strtoupper($friend['username']):
                             'You are not friends with '.strtoupper($friend['username']));
+    }
+    
+    /**
+     * Get friend online status
+     * 
+     * @Maps - http://website/api/friends/last/seen/(:username)
+     */
+    public function online_status(string $username = NULL) {
+        //$this->auth->loggedin();
+        $friend = $this->accounts->get(['username' => $username])[0] ?? [];
+        if(count($friend) == 0) {
+            return $this->api->api_response(false, 'Friend username does not exist.');
+        }
+        return $this->api->response(['last_seen' => $friend['last_seen']]);
+    }
+    
+    /**
+     * Get friend account details
+     * 
+     * @Maps - http://website/api/friends/details/(:username)
+     */
+    public function friends_details(string $username = NULL) {
+        $friend = $this->accounts->get(['username' => $username ?? ''])[0] ?? [];
+        
+        if (count($friend) == 0) {
+            return $this->api->api_response(false, 'Friend username does not exist.');
+        }
+            
+        return $this->api->response([
+            'profile_picture' => $friend['profile_picture'],
+            'username' => $friend['username'],
+            'last_seen' => $friend['last_seen']
+        ]);
     }
     
 }

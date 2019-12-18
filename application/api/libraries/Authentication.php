@@ -74,6 +74,11 @@ class Authentication
         exit();
     }
     
+    /**
+     * Updated user last seen
+     * 
+     * @return boolean
+     */
     public function updated_user_last_seen() {
         if($this->loggedout(false)) {
             return false;

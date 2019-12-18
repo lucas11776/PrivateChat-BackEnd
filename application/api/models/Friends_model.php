@@ -44,23 +44,28 @@ class Friends_model extends CI_Model
         return $this;
     }
     
-    private function select_chat_preview() {
-        $this->db->select('accounts.username,accounts.profile_picture,accounts.last_seen,
-            (SELECT COUNT(*) FROM chats WHERE (chats.to_user=1 AND chats.from_user=friends.from_user)) AS messages,
-            text.content AS text,text.created AS text_created');
-        return $this;
-    }
-    
     /**
-     * Join chats table with friendship latest text
+     * Select friend fields with last send chat and unread chats count
      * 
+     * @param int $user_id
      * @return Friends_model
      */
-    private function join_chats_table_message() {
-        $table = '(SELECT * FROM chats c ORDER BY c.chat_id DESC LIMIT 1) AS text';
-        $cord = '(text.from_user='.self::TABLE.'.from_user AND text.to_user='.self::TABLE.'.to_user) OR 
-                 (text.to_user='.self::TABLE.'.from_user AND text.from_user='.self::TABLE.'.to_user)';
-        $this->db->join($table, $cord, 'LEFT');
+    private function select_chat_preview(int $user_id) {
+        $this->db->select("accounts.username, accounts.profile_picture, accounts.last_seen,
+        (SELECT COUNT(*) FROM chats WHERE (chats.to_user={$user_id} AND chats.from_user=friends.from_user)) AS messages,
+        (
+            SELECT c1.type FROM chats c1 WHERE 
+                (c1.from_user={$user_id} AND c1.to_user=accounts.user_id) OR(c1.to_user={$user_id} AND c1.from_user=accounts.user_id)
+            ORDER BY c1.chat_id DESC LIMIT 1 ) AS type,
+        (
+            SELECT c1.created FROM chats c1 WHERE 
+                (c1.from_user={$user_id} AND c1.to_user=accounts.user_id) OR (c1.to_user={$user_id} AND c1.from_user=accounts.user_id)
+            ORDER BY c1.chat_id DESC LIMIT 1
+        ) AS text_created,
+        (
+            SELECT c1.content FROM chats c1 WHERE
+                (c1.from_user={$user_id} AND c1.to_user=accounts.user_id) OR (c1.to_user={$user_id} AND c1.from_user=accounts.user_id)
+            ORDER BY c1.chat_id DESC LIMIT 1 ) AS content");
         return $this;
     }
     
@@ -204,9 +209,8 @@ class Friends_model extends CI_Model
      * @return array
      */
     public function friends_chat_preview(string $search ,int $user_id, int $limit = NULL, int $offset = NULL) {
-        return $this->select_chat_preview()
+        return $this->select_chat_preview($user_id)
                     ->join_account_table($user_id)
-                    ->join_chats_table_message()
                     ->db
                     ->order_by('text_created', 'DESC')
                     ->where([self::TABLE.'.from_user' => $user_id])

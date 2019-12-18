@@ -10,7 +10,6 @@ class Authorization extends CI_Controller
      * @Maps - http://website/api/authentication/loggedin
      */
     public function loggedin() {
-        $this->auth->updated_user_last_seen();
         return $this->api->response([
             'status' => $this->auth->loggedin(false)
         ]);
@@ -22,7 +21,6 @@ class Authorization extends CI_Controller
      * @Maps - http://website/api/authentication/loggedout
      */
     public function loggedout() {
-        $this->auth->updated_user_last_seen();
         return $this->api->response([
             'status' => $this->auth->loggedout(false)
         ]);
