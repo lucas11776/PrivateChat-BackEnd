@@ -63,6 +63,7 @@ $route['friends/last/seen/(:any)'] = 'friends/friends/online_status/$1';
 $route['friends/search/(:any)'] = 'friends/search/index/$1';
 $route['friends/user/(:any)'] = 'friends/friends/friends_user/$1';
 $route['friends/details/(:any)'] = 'friends/friends/friends_details/$1';
+$route['chats/(:any)'] = 'chats/chats/index/$1';
 $route['update/last/seen'] = 'user/last_seen_update';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;

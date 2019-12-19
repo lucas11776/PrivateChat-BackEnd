@@ -31,6 +31,7 @@ class Friends extends CI_Controller
      * @Maps - http://website/friends/chat/preview
      */
     public function chat_preview(string $search = NULL) {
+        $this->auth->loggedin();
         $limit = is_numeric($this->input->get('limit')) ? $this->input->get('limit') : 0;
         $offset = is_numeric($this->input->get('offset')) ? $this->input->get('offset') : 0;
         return $this->api->response(
@@ -87,11 +88,9 @@ class Friends extends CI_Controller
      */
     public function friends_details(string $username = NULL) {
         $friend = $this->accounts->get(['username' => $username ?? ''])[0] ?? [];
-        
         if (count($friend) == 0) {
             return $this->api->api_response(false, 'Friend username does not exist.');
         }
-            
         return $this->api->response([
             'profile_picture' => $friend['profile_picture'],
             'username' => $friend['username'],
