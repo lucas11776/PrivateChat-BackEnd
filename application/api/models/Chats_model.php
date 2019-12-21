@@ -63,6 +63,16 @@ class Chats_model extends CI_Model
     }
     
     /**
+     * Insert chat in database
+     * 
+     * @param array
+     * @return boolean
+     */
+    public function insert(array $data) {
+        return $this->db->insert(self::TABLE, $data);
+    }
+
+    /**
      * Join user and friend accounts table
      *
      * @param int
