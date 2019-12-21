@@ -4,8 +4,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Chats_model extends CI_Model
 {
     
+    /**
+     * Chats table name in database
+     * 
+     * @var string
+     */
     private const TABLE = 'chats';
     
+    /**
+     * Account table name in datbase
+     * 
+     * @var string
+     */
     private const ACCOUNTS = 'accounts';
     
     /**
@@ -64,6 +74,22 @@ class Chats_model extends CI_Model
                     ->db
                     ->get(self::TABLE)
                     ->result_array();
+        return $result;
+    }
+    
+    /**
+     * Join user and friend accounts table
+     *
+     * @param int
+     */
+    public function latest_chats(int $user, int $friend, string $last_text, int $limit = NULL) {
+        $result = $this->select_chats_fields($user)
+        ->join_accounts_table($user, $friend)
+        ->where_chats($user, $friend)
+        ->db
+        ->where(self::TABLE.'.created >', $last_text)
+        ->get(self::TABLE)
+        ->result_array();
         return $result;
     }
     

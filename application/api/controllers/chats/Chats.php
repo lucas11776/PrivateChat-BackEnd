@@ -21,7 +21,7 @@ class Chats extends CI_Controller
     /**
      * Get user chats from database
      * 
-     * 
+     * @param string $username
      */
     public function index(string $username = NULL) {
         $this->auth->loggedin();
@@ -38,6 +38,30 @@ class Chats extends CI_Controller
             'user' => $this->auth->account('username'),
             'total' => 10,
             'chats' => $this->chats->get($this->auth->account('user_id') ?? 1, $this->friend['user_id'], $limit, $offset)
+        ]
+        );
+    }
+
+    /**
+     * Get user chats from database
+     * 
+     * @param string $username
+     */
+    public function latest_chats(string $username = NULL) {
+        //$this->auth->loggedin();
+
+        if(is_string($error = $this->get_friend($username ?? ''))) {
+            return $this->api->api_response(false, $error);
+        }
+        
+        $limit = is_numeric($this->input->get('limit')) ? $this->input->get('limit') : self::LIMIT;
+        $last_chat = is_string($this->input->get('latest')) ? $this->input->get('latest') : '';
+        
+        return $this->api->response([
+            'friend' => $this->friend['username'],
+            'user' => $this->auth->account('username'),
+            'total' => 10,
+            'chats' => $this->chats->latest_chats($this->auth->account('user_id') ?? 1, $this->friend['user_id'], $last_chat, $limit)
         ]
         );
     }

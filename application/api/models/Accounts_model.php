@@ -5,7 +5,7 @@ class Accounts_model extends CI_Model
 {
     
     /**
-     * Users accounts table name in database
+     * Accounts table name in database
      * 
      * @var string
      */
