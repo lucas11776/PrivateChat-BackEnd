@@ -55,13 +55,13 @@ class Chats extends CI_Controller
         }
         
         $limit = is_numeric($this->input->get('limit')) ? $this->input->get('limit') : self::LIMIT;
-        $last_chat = is_string($this->input->get('latest')) ? $this->input->get('latest') : '';
+        $chat_id = is_numeric($this->input->get('chat_id')) ? $this->input->get('chat_id') : 0;
         
         return $this->api->response([
             'friend' => $this->friend['username'],
             'user' => $this->auth->account('username'),
             'total' => 10,
-            'chats' => $this->chats->latest_chats($this->auth->account('user_id') ?? 1, $this->friend['user_id'], $last_chat, $limit)
+            'chats' => $this->chats->latest_chats($this->auth->account('user_id') ?? 1, $this->friend['user_id'], $chat_id, $limit)
         ]
         );
     }

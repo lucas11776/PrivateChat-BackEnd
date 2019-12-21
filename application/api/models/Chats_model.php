@@ -40,10 +40,12 @@ class Chats_model extends CI_Model
      */
     private function where_chats(int $user, int $friend) {
         $this->db->group_start()
-                    ->where([self::TABLE.'.from_user' => $user, self::TABLE.'.to_user' => $friend])
-                ->group_end()
-                ->or_group_start()
-                    ->where([self::TABLE.'.to_user' => $user, self::TABLE.'.from_user' => $friend])
+                    ->group_start()
+                        ->where([self::TABLE.'.from_user' => $user, self::TABLE.'.to_user' => $friend])
+                    ->group_end()
+                    ->or_group_start()
+                        ->where([self::TABLE.'.to_user' => $user, self::TABLE.'.from_user' => $friend])
+                    ->group_end()
                 ->group_end();
         return $this;
     }
@@ -92,14 +94,16 @@ class Chats_model extends CI_Model
      *
      * @param int
      */
-    public function latest_chats(int $user, int $friend, string $last_text, int $limit = NULL) {
+    public function latest_chats(int $user, int $friend, int $chat_id, int $limit = NULL) {
         $result = $this->select_chats_fields($user)
-        ->join_accounts_table($user, $friend)
-        ->where_chats($user, $friend)
-        ->db
-        ->where(self::TABLE.'.created >', $last_text)
-        ->get(self::TABLE)
-        ->result_array();
+            ->join_accounts_table($user, $friend)
+            ->where_chats($user, $friend)
+            ->db
+            ->group_start()
+                ->where(self::TABLE.'.chat_id >', $chat_id)
+            ->group_end()
+            ->get(self::TABLE)
+            ->result_array();
         return $result;
     }
     
