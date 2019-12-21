@@ -144,5 +144,6 @@ $autoload['model'] = array(
     'accounts_model' => 'accounts',
     'friends_model' => 'friends',
     'friends_requests_model' => 'friends_requests',
-    'chats_model' => 'chats'
+    'chats_model' => 'chats',
+    'notification_model' => 'notification'
 );
