@@ -52,7 +52,7 @@ class Friends_model extends CI_Model
      */
     private function select_chat_preview(int $user_id) {
         $this->db->select("accounts.username, accounts.profile_picture, accounts.last_seen,
-        (SELECT COUNT(*) FROM chats WHERE (chats.to_user={$user_id} AND chats.from_user=friends.from_user)) AS messages,
+        (SELECT COUNT(*) FROM chats WHERE (chats.to_user={$user_id} AND chats.from_user=accounts.user_id AND chats.seen=0)) AS messages,
         (
             SELECT c1.type FROM chats c1 WHERE 
                 (c1.from_user={$user_id} AND c1.to_user=accounts.user_id) OR(c1.to_user={$user_id} AND c1.from_user=accounts.user_id)
@@ -217,6 +217,16 @@ class Friends_model extends CI_Model
                     ->or_where([self::TABLE.'.to_user' => $user_id])
                     ->get(self::TABLE)
                     ->result_array();
+    }
+
+    /**
+     * Delete friendship
+     * 
+     * @param int $user_id
+     * @return boolean
+     */
+    public function delete(int $user_id) {
+        return $this->db->delete(self::TABLE);
     }
     
 }

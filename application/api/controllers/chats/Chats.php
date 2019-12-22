@@ -33,11 +33,14 @@ class Chats extends CI_Controller
         $limit = is_numeric($this->input->get('limit')) ? $this->input->get('limit') : self::LIMIT;
         $offset = is_numeric($this->input->get('offset')) ? $this->input->get('offset') : 0;
         
+        // mark all user chats seen
+        $this->chats->chats_seen($this->auth->account('user_id'), $this->friend['user_id']);
+
         return $this->api->response([
             'friend' => $this->friend['username'],
             'user' => $this->auth->account('username'),
             'total' => 10,
-            'chats' => $this->chats->get($this->auth->account('user_id') ?? 1, $this->friend['user_id'], $limit, $offset)
+            'chats' => $this->chats->get($this->auth->account('user_id'), $this->friend['user_id'], $limit, $offset)
         ]
         );
     }
@@ -48,7 +51,7 @@ class Chats extends CI_Controller
      * @param string $username
      */
     public function latest_chats(string $username = NULL) {
-        //$this->auth->loggedin();
+        $this->auth->loggedin();
 
         if(is_string($error = $this->get_friend($username ?? ''))) {
             return $this->api->api_response(false, $error);
@@ -56,15 +59,22 @@ class Chats extends CI_Controller
         
         $limit = is_numeric($this->input->get('limit')) ? $this->input->get('limit') : self::LIMIT;
         $chat_id = is_numeric($this->input->get('chat_id')) ? $this->input->get('chat_id') : 0;
+
+        // mark all user chats seen
+        $this->chats->chats_seen($this->auth->account('user_id'), $this->friend['user_id']);
         
         return $this->api->response([
             'friend' => $this->friend['username'],
             'user' => $this->auth->account('username'),
             'total' => 10,
-            'chats' => $this->chats->latest_chats($this->auth->account('user_id') ?? 1, $this->friend['user_id'], $chat_id, $limit)
-        ]
-        );
+            'chats' => $this->chats->latest_chats($this->auth->account('user_id'), $this->friend['user_id'], $chat_id, $limit)
+        ]);
     }
+
+    /**
+     * Mark chat as see
+     * 
+     */
     
     /**
      * Get users friend account details
@@ -79,7 +89,7 @@ class Chats extends CI_Controller
            return 'Friend username does not exist.'; 
         }
         
-        if($this->friends->friendship_exist($this->auth->account('user_id') ?? 1, $this->friend['user_id']) == false) {
+        if($this->friends->friendship_exist($this->auth->account('user_id'), $this->friend['user_id']) == false) {
             return 'User are not friends with ' . $username;
         }
         

@@ -37,7 +37,7 @@ class Friends extends CI_Controller
         return $this->api->response(
             $this->friends->friends_chat_preview(
                 $search ?? '',
-                $this->auth->account('user_id') ?? 1,
+                $this->auth->account('user_id'),
                 $limit,
                 $offset
             )

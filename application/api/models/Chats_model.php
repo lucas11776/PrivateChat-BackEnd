@@ -77,7 +77,11 @@ class Chats_model extends CI_Model
     /**
      * Join user and friend accounts table
      *
-     * @param int
+     * @param int $user
+     * @param int $friend
+     * @param int $limit
+     * @param int $offset
+     * @return array
      */
     public function get(int $user, int $friend, int $limit = NULL, int $offset = NULL) {
         $result = $this->select_chats_fields($user)
@@ -87,6 +91,17 @@ class Chats_model extends CI_Model
                     ->get(self::TABLE)
                     ->result_array();
         return $result;
+    }
+
+    /**
+     * Register messages as seen
+     * 
+     * @param int $user_id
+     * @return boolean
+     */
+    public function chats_seen(int $user_id, int $friend_id) {
+        return $this->db->where(['from_user' => $friend_id, 'to_user' => $user_id, 'seen' => 0])
+                        ->update(self::TABLE, ['seen' => 1]);
     }
     
     /**
