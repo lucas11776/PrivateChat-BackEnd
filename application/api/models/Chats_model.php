@@ -75,6 +75,15 @@ class Chats_model extends CI_Model
     }
 
     /**
+     * Get chat from database
+     */
+    public function get_chat(int $chat_id) { 
+        return $this->db->where('chat_id', $chat_id)
+                        ->get(self::TABLE)
+                        ->result_array()[0] ?? [];
+    }
+
+    /**
      * Join user and friend accounts table
      *
      * @param int $user
@@ -129,7 +138,7 @@ class Chats_model extends CI_Model
      * @param int Friend ID
      * @return int
      */
-    private function count(int $user, int $friend) {
+    public function count(int $user, int $friend) {
         return $this->join_accounts_table($user, $friend)
                     //->where_chats($user, $friend)
                     ->count_all_results();
@@ -141,8 +150,9 @@ class Chats_model extends CI_Model
      * @param array $where
      * @return string|boolean
      */
-    private function delete(array $where) {
-        
+    public function delete(array $where) {
+        return $this->db->where($where)
+                        ->delete(self::TABLE);
     }
     
 }

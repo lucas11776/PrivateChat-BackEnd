@@ -41,8 +41,7 @@ class Chats extends CI_Controller
             'user' => $this->auth->account('username'),
             'total' => 10,
             'chats' => $this->chats->get($this->auth->account('user_id'), $this->friend['user_id'], $limit, $offset)
-        ]
-        );
+        ]);
     }
 
     /**
@@ -70,11 +69,6 @@ class Chats extends CI_Controller
             'chats' => $this->chats->latest_chats($this->auth->account('user_id'), $this->friend['user_id'], $chat_id, $limit)
         ]);
     }
-
-    /**
-     * Mark chat as see
-     * 
-     */
     
     /**
      * Get users friend account details

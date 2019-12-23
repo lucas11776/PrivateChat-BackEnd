@@ -64,6 +64,7 @@ $route['friends/search/(:any)'] = 'friends/search/index/$1';
 $route['friends/user/(:any)'] = 'friends/friends/friends_user/$1';
 $route['friends/details/(:any)'] = 'friends/friends/friends_details/$1';
 $route['chats/latest/(:any)'] = 'chats/chats/latest_chats/$1';
+$route['chats/delete'] = 'chats/delete/index';
 $route['chats/(:any)'] = 'chats/chats/index/$1';
 $route['notifications'] = 'notification/index';
 $route['update/last/seen'] = 'user/last_seen_update';
