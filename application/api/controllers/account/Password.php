@@ -1,4 +1,4 @@
-<?php
+ <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Password extends CI_Controller
@@ -10,7 +10,7 @@ class Password extends CI_Controller
      * @Map - http://website/api/account/change/password
      */
     public function index() {
-        $this->auth->logggedin();
+        $this->auth->loggedin();
         
         $this->form_validation->set_rules('old_password', 'old password', 'required|callback_matches_password');
         $this->form_validation->set_rules('new_password', 'new password', 'required');
@@ -37,7 +37,7 @@ class Password extends CI_Controller
      * @return boolean
      */
     public function matches_password(string $password = NULL) {
-        $account_password = $this->encryption->decryt($this->auth->account('password'));
+        $account_password = $this->encryption->decrypt($this->auth->account('password'));
         if($password != $account_password) {
             $this->form_validation->set_message('matches_password', 'The {field} does not match account password.');
             return false;
