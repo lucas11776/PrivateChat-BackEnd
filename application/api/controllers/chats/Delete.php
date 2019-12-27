@@ -36,22 +36,48 @@ class Delete extends CI_Controller
         }
 
         // delete file if type is not text
-        
+        if(is_array($errors = $this->delete_chat())) {
+            // save errors to delete file error
+        }
         
         return $this->api->api_response(true, 'Chat delete successfully.');
     }
 
     /**
      * Delete all user chats in database
+     * 
+     * @Map - http://website/api/chats/clear/all
      */
-    public function clear(string $username = NULL) {
-        $this->form_validation->set_rules('friend', 'friend', 'required');
+    public function clear_all() {
+        $this->auth->loggedin();
+        
+        $this->form_validation->set_rules('username', 'friend', 'required|callback_friend_exist|callback_friendship_exist');
 
         if($this->form_validation->run() == false) {
             return $this->api->api_response(false, $this->form_validation->error_array()['friend'] ?? '');
         }
-
         
+        $this->chat = $this->chats->get_all_chats(
+            $this->auth->account('user_id'), $this->friend['user_id']
+        );
+        
+        $last_chat_id = count($this->chat) !== 0 ? $this->chat[count($this->chat)-1]['chat_id'] : 0;
+        $chats_cleared = $this->chats->clear(
+            $this->auth->account('user_id'),
+            $this->friend['user_id'],
+            $last_chat_id
+        );
+        
+        if($chats_cleared == false) {
+            return $this->api->api_response(false, 'Something went wrong when tring to connect to database.');
+        }
+
+        // delete file if type is not text
+        if(is_array($errors = $this->delete_chat())) {
+            // save errors to delete file error
+        }
+        
+        return $this->api->api_response(true, "All chats when deleted successfully.");
     }
 
     /**
@@ -92,7 +118,7 @@ class Delete extends CI_Controller
      * @return boolean
      */
     public function friend_exist(string $username = NULL) {
-        $this->friend = $this->account->get(['username' => $username])[0] ?? [];
+        $this->friend = $this->accounts->get(['username' => $username])[0] ?? [];
         if(count($this->friend) == 0) {
             $this->form_validation->set_message('friend_exist', 'Friend does does not exist.');
             return false;
@@ -117,11 +143,22 @@ class Delete extends CI_Controller
     /**
      * Delete chats in database
      * 
-     * @param
-     * @return
+     * @return 
      */
     private function delete_chat() {
-
+        $error = [];
+        for($i = 0; $i < count($this->chat); $i++) {
+//             if($this->chat[$i]['type'] == 'picture') {
+//                 if($this->delete_picture($this->chat[$i]['content']) == false) {
+//                     $error[] = $this->chat[$i]['content'];
+//                 }
+//             } elseif($this->chat[$i]['type'] == 'video') {
+//                 if($this->delete_video($this->chat[$i]['content']) == false) {
+//                     $error[] = $this->chat[$i]['content'];
+//                 }
+//             }
+        }
+        return count($error) == 0 ? true :  $error;
     }
 
     /**
@@ -130,8 +167,8 @@ class Delete extends CI_Controller
      * @param
      * @return
      */
-    private function delete_video() {
-
+    private function delete_video(string $path) {
+        return true;
     }
 
     /**
@@ -140,8 +177,8 @@ class Delete extends CI_Controller
      * @param
      * @return 
      */
-    private function delete_picture() {
-
+    private function delete_picture(string $path) {
+        return true;
     }
 
 }
