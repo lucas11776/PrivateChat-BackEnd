@@ -23,6 +23,8 @@ class Delete extends CI_Controller
      * @Maps - http://website/api/chats/delete
      */
     public function index() {
+        $this->auth->loggedin();
+        
         $this->form_validation->set_rules('chat_id', 'chat', 'required|integer|callback_chat_exist|callback_user_chat');
 
         if($this->form_validation->run() == false) {
@@ -54,7 +56,7 @@ class Delete extends CI_Controller
         $this->form_validation->set_rules('username', 'friend', 'required|callback_friend_exist|callback_friendship_exist');
 
         if($this->form_validation->run() == false) {
-            return $this->api->api_response(false, $this->form_validation->error_array()['friend'] ?? '');
+            return $this->api->api_response(false, $this->form_validation->error_array()['username'] ?? '');
         }
         
         $this->chat = $this->chats->get_all_chats(
@@ -71,11 +73,8 @@ class Delete extends CI_Controller
         if($chats_cleared == false) {
             return $this->api->api_response(false, 'Something went wrong when tring to connect to database.');
         }
-
-        // delete file if type is not text
-        if(is_array($errors = $this->delete_chat())) {
-            // save errors to delete file error
-        }
+        
+        # delete all chats that are not text
         
         return $this->api->api_response(true, "All chats when deleted successfully.");
     }
@@ -137,47 +136,6 @@ class Delete extends CI_Controller
             $this->form_validation->set_message('friendship_exist', 'Your are not friends with ' + $this->friend['username'].'.');
             return false;
         }
-        return true;
-    }
-
-    /**
-     * Delete chats in database
-     * 
-     * @return 
-     */
-    private function delete_chat() {
-        $error = [];
-        for($i = 0; $i < count($this->chat); $i++) {
-//             if($this->chat[$i]['type'] == 'picture') {
-//                 if($this->delete_picture($this->chat[$i]['content']) == false) {
-//                     $error[] = $this->chat[$i]['content'];
-//                 }
-//             } elseif($this->chat[$i]['type'] == 'video') {
-//                 if($this->delete_video($this->chat[$i]['content']) == false) {
-//                     $error[] = $this->chat[$i]['content'];
-//                 }
-//             }
-        }
-        return count($error) == 0 ? true :  $error;
-    }
-
-    /**
-     * Delete video file
-     * 
-     * @param
-     * @return
-     */
-    private function delete_video(string $path) {
-        return true;
-    }
-
-    /**
-     * Delete picture file
-     * 
-     * @param
-     * @return 
-     */
-    private function delete_picture(string $path) {
         return true;
     }
 

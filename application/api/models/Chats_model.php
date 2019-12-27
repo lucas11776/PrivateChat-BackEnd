@@ -170,13 +170,14 @@ class Chats_model extends CI_Model
      * @param integer $last_chat_id
      * @return boolean
      */
-    public function clear(int $user, int $friend, int $last_chat_id) {
-        return $this->where_chats($user, $friend)
-                    ->db
-                    ->group_start()
-                        ->where(self::TABLE.'.chat_id <=', $last_chat_id)
-                    ->group_end()
-                    ->delete(self::TABLE);
+    public function clear(int $user, int $friend, int $last_chat_id = NULL) {
+        $db = $this->where_chats($user, $friend)->db;
+        if($last_chat_id != null) {
+            $db->group_start()
+                ->where(self::TABLE.'.chat_id <=', $last_chat_id)
+               ->group_end();
+        }
+        return $db->delete(self::TABLE);
     }
     
 }

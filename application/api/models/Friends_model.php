@@ -225,8 +225,14 @@ class Friends_model extends CI_Model
      * @param int $user_id
      * @return boolean
      */
-    public function delete(int $user_id) {
-        return $this->db->delete(self::TABLE);
+    public function delete(int $user, int $friend) {
+        return $this->db->group_start()
+                            ->where(['from_user' => $user, 'to_user' => $friend])
+                        ->group_end()
+                        ->or_group_start()
+                            ->where(['from_user' => $friend, 'to_user' => $user])
+                        ->group_end()
+                        ->delete(self::TABLE);
     }
     
 }
