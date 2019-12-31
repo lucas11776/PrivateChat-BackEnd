@@ -2,3 +2,8 @@
 .buildpath
 .project
 .settings
+
+# uploads
+uploads/audio/*
+uploads/picture/*
+uploads/profile/*

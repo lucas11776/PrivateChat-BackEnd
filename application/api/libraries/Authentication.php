@@ -118,7 +118,9 @@ class Authentication
      * @return array
      */
     private function decrypt_user_token() {
-        $token_header = $this->CI->input->request_headers()['token'] ?? [];
+        $headers = $this->CI->input->request_headers();
+
+        $token_header = $headers['Auth-Token'] ?? $headers['auth-token'] ?? [];
         
         if (is_array($token_header)) {
             return $token_header;

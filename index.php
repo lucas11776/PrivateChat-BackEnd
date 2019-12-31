@@ -36,6 +36,31 @@
  * @filesource
  */
 
+
+/*
+ *---------------------------------------------------------------
+ * APPICATION HEADERS
+ *---------------------------------------------------------------
+ *
+ * Allow cross site scripting, Set content response type to json
+ * 
+ */
+header("Access-Control-Allow-Origin: *");
+header("Content-Type: application/json");
+
+/*
+ *---------------------------------------------------------------
+ * APPLICATION REQUEST DATA
+ *---------------------------------------------------------------
+ *
+ * Get PHP file stream data and assign data to `$_POST` because PHP
+ * does not assign ajax request `POST` data to `$_POST` var
+ *
+ * @var object
+ */
+$_POST = json_decode(file_get_contents('php://input'), true);
+
+
 /*
  *---------------------------------------------------------------
  * APPLICATION ENVIRONMENT
@@ -114,7 +139,7 @@ switch (ENVIRONMENT)
  *
  * NO TRAILING SLASH!
  */
-	$application_folder = 'application/web';
+	$application_folder = 'application/api';
 
 /*
  *---------------------------------------------------------------

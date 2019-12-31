@@ -3,6 +3,28 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Upload_file
 {
+
+    /**
+     * Profile picture upload configurations
+     * 
+     * @var array
+     */
+    public const PROFILE_PICTURE_CONFIG = [
+        'upload_path' => 'uploads/profile/',
+        'allowed_types' => ['png','jpg','jpge'],
+        'max_size' => 1000
+    ];
+
+    /**
+     * Picture configuration upload configurations
+     * 
+     * @var array
+     */
+    public const PICTURE_CONFIG = [
+        'upload_path' => 'uploads/picture/',
+        'allowed_types' => ['png','jpg','jpge'],
+        'max_size' => 1000
+    ];
     
     /**
      * CodeIgniter super-object
@@ -12,38 +34,52 @@ class Upload_file
     protected $CI;
 
     /**
-     * Profile picture upload directory
+     * Upload profile picture name prefix
      * 
      * @var string
      */
-    public const PROFILE_PICTURE_DII = 'uploads/profile-pictures/';
+    private const PROFILE_PICTURE_PREFIX = 'PROFILE-';
 
     /**
-     * Picture upload directory
+     * Upload picture name extension
      * 
      * @var string
      */
-    public const PICTURE_DIR = 'uploads/pictures/';
-
-    /**
-     * Video upload directory
-     * 
-     * @var string
-     */
-    public const VIDEO_DIR = 'uploads/videos/';
-
-    /**
-     * Audio upload directory
-     * 
-     * @var string
-     */
-    public const AUDIO = 'uploads/audios/';
+    private const PICTURE_PREFIX = 'PICTURE-';
     
     public function __construct() {
         $this->CI =& get_instance();
-        $this->CI->load->library('encryption');
+        $this->CI->load->library('upload');
+    }
+
+    /**
+     * Upload file to profile pictures
+     * 
+     * @param string $file
+     * @return boolean
+     */
+    public function profile_picture(string $file) {
+        $filename = ['file_name' => uniqid(self::PROFILE_PICTURE_PREFIX)];
+        return $this->upload($file, array_merge(self::PROFILE_PICTURE_CONFIG, $filename));
+    }
+
+    /**
+     * Upload data
+     * 
+     * @return array
+     */
+    public function data(string $field = NULL) {
+        return $this->CI->upload->data($field);
     }
     
+    /**
+     * Upload file error
+     * 
+     * @return string
+     */
+    public function error() {
+        return $this->CI->upload->display_errors('','');
+    }
 
     /**
      * Upload file
@@ -52,8 +88,9 @@ class Upload_file
      * @param array $config
      * @return mixed
      */
-    protected function upload_file(string $file, array $config = []) {
-
+    protected function upload(string $file, array $config = []) {
+        $this->CI->upload->initialize($config);
+        return $this->CI->upload->do_upload($file);
     }
 
 }
