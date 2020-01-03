@@ -36,11 +36,6 @@ class Delete extends CI_Controller
         if($this->chats->delete($delete) == false) {
             return $this->api->api_response(false, 'Something went wrong when tring to connect to database please try again later.');
         }
-
-        // delete file if type is not text
-        if(is_array($errors = $this->delete_chat())) {
-            // save errors to delete file error
-        }
         
         return $this->api->api_response(true, 'Chat delete successfully.');
     }

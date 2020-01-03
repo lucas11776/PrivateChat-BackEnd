@@ -7,16 +7,20 @@ class Profile_picture extends CI_Controller
     /**
      * Upload new user profile picture
      * 
+     * Maps - http://website/api/upload/profile/picture
      */
     public function index() {
+        $this->auth->loggedin();
+
         $this->form_validation->set_rules('picture', 'profile picture', 'callback_upload');
 
         if($this->form_validation->run() == false) {
-            return $this->api->api_response(false, $this->form_validation->error_array()['picture'] ?? '');
+            return $this->api->api_response(false, $this->form_validation->error_array()['picture']);
         }
 
         // upload file path
         $file_path = $this->file_upload::PROFILE_PICTURE_CONFIG['upload_path'] . $this->file_upload->data('file_name');
+
         // update profile picture
         $update = $this->accounts->update(
             ['user_id' => $this->auth->account('user_id')], 
@@ -33,7 +37,7 @@ class Profile_picture extends CI_Controller
         $default_profile_picture = base_url($this->accounts::PROFILE_PICTURE);
         
         // check if profile picture is not default profile picture
-        if($default_profile_picture != $this->auth->account()) {
+        if($default_profile_picture != $this->auth->account('profile_picture')) {
             unlink(str_replace(base_url(), '', $this->auth->account('profile_picture')));
         }
 

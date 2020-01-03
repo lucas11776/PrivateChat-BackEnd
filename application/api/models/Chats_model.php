@@ -104,6 +104,7 @@ class Chats_model extends CI_Model
                     ->join_accounts_table($user, $friend)
                     ->where_chats($user, $friend)
                     ->db
+                    ->order_by(self::TABLE.'.chat_id', 'ASC')
                     ->get(self::TABLE)
                     ->result_array();
         return $result;
@@ -130,6 +131,7 @@ class Chats_model extends CI_Model
             ->join_accounts_table($user, $friend)
             ->where_chats($user, $friend)
             ->db
+            ->order_by(self::TABLE.'.chat_id', 'ASC')
             ->group_start()
                 ->where(self::TABLE.'.chat_id >', $chat_id)
             ->group_end()

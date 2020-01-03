@@ -14,7 +14,7 @@ class Unfriend extends CI_Controller
     /**
      * Unfriend a user in database
      * 
-     * @Maps- http://website/api/friends/
+     * @Maps- http://website/api/friends/unfriend
      */
     public function index() {
         $this->auth->loggedin();
